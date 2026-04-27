@@ -1,0 +1,239 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+		"name": "AI Resume Optimizer API",
+		"description": "API collection for testing the AI Resume Optimizer backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/resume/health",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "resume", "health"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Parse Resume",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": ""
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/resume/parse-resume",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "resume", "parse-resume"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Analyze Job Description",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "We are looking for a Senior Java Developer with 5+ years of experience in Java, Spring Boot, and microservices. The ideal candidate should have strong knowledge of REST APIs, SQL databases, and cloud platforms like AWS. Experience with Agile methodologies and unit testing is required."
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/resume/analyze-job",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "resume", "analyze-job"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Optimize Resume (Complete)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "resumeFile",
+							"type": "file",
+							"src": ""
+						},
+						{
+							"key": "jobDescription",
+							"type": "text",
+							"value": "We are looking for a Senior Java Developer with 5+ years of experience in Java, Spring Boot, and microservices. The ideal candidate should have strong knowledge of REST APIs, SQL databases, and cloud platforms like AWS. Experience with Agile methodologies and unit testing is required."
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/resume/optimize",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "resume", "optimize"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Enhance Content with Gemini",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"originalContent\": \"Experienced software developer with Java skills\",\n  \"jobDescription\": \"Looking for Senior Java Developer with Spring Boot experience\",\n  \"analysisType\": \"summary\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/gemini/enhance",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "gemini", "enhance"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Generate Cover Letter",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"resumeContent\": \"Senior Java Developer with 5 years of experience in Spring Boot and microservices\",\n  \"jobDescription\": \"We are looking for a Senior Java Developer to join our team\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/gemini/cover-letter",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "gemini", "cover-letter"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Analyze Job Fit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"resumeContent\": \"Java Developer with Spring Boot experience\",\n  \"jobDescription\": \"Looking for Senior Java Developer with 5+ years experience\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/gemini/analyze-fit",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "gemini", "analyze-fit"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Payment Plans",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/payment/plans",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "payment", "plans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Payment Order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"amount\": 99,\n  \"currency\": \"INR\",\n  \"receipt\": \"order_12345\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/payment/create-order",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "payment", "create-order"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Payment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"orderId\": \"order_12345\",\n  \"paymentId\": \"pay_12345\",\n  \"signature\": \"generated_signature\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/payment/verify",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "payment", "verify"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Payment Config",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/payment/config",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "payment", "config"]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
