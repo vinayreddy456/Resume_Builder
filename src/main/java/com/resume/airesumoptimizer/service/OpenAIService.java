@@ -1,5 +1,6 @@
 package com.resume.airesumoptimizer.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -25,251 +26,249 @@ public class OpenAIService {
     public Map<String, Object> optimizeResume(String resume, String jd) {
         try {
 
-//             // 🔥 STRONG PROMPT (UPGRADED)
-//            String prompt = """
-// You are a world-class ATS resume optimizer, career strategist, and hiring expert.
+            // 🔥 CLEAN JSON-ONLY PROMPT (NO LATEX)
+//             String prompt = """
+// You are an expert ATS resume optimizer.
 
-// INPUT:
-// Resume:
-// %s
-
-// Job Description:
-// %s
-
-// OBJECTIVE:
-// Completely transform the resume to match the job description, EVEN IF the domain, role, or technology stack is different.
+// IMPORTANT:
+// - Do NOT fabricate fake experience
+// - Only improve existing content
+// - Align resume with job description
+// - Return ONLY valid JSON
+// - Do NOT return empty object
 
 // ---
 
-// STEP 1: IDENTIFY TARGET ROLE
-// - Analyze the job description
-// - Identify:
-//   - Target role (e.g., .NET Developer, Data Scientist, Python Developer)
-//   - Required skills
-//   - Tools, frameworks, domain
-
-// ---
-
-// STEP 2: TRANSFORM RESUME (CRITICAL)
-
-// A. EXPERIENCE TRANSFORMATION:
-// - KEEP same company names, job titles, and dates (NO fake companies)
-// - BUT rewrite responsibilities to match target role
-// - Adapt work to align with job description
-// - Example:
-//   - Java → Python → rewrite as Python-based work
-//   - Backend → Data Science → rewrite tasks as data handling, ML, analytics
-// - Maintain realistic career progression
-
-// B. SKILLS TRANSFORMATION (VERY IMPORTANT):
-// - Completely rewrite skills section based on job description
-// - ADD required skills from JD
-// - REMOVE irrelevant skills
-// - Ensure skills match rewritten experience
-// - Dynamically adapt to ANY domain:
-//   - Programming languages
-//   - Frameworks
-//   - Tools
-//   - Cloud technologies
-
-// C. PROJECT/WORK ALIGNMENT:
-// - Modify project descriptions to reflect:
-//   - Target technologies
-//   - Business impact
-//   - Job responsibilities
-// - Add measurable metrics:
-//   - "Improved performance by 30%%"
-//   - "Reduced processing time by 40%%"
-//   - "Handled 50K+ records/users"
-
-// ---
-
-// STEP 3: ATS OPTIMIZATION
-// - Inject keywords from job description naturally
-// - Ensure high keyword match score
-// - Make resume pass ATS filters
-
-// ---
-
-// STEP 4: REALISM CONSTRAINT
-// - DO NOT create fake companies
-// - DO NOT invent completely unrealistic experience
-// - BUT reinterpret and adapt existing experience intelligently
-
-// ---
-
-// OUTPUT FORMAT (STRICT JSON ONLY):
+// RETURN STRICT JSON:
 
 // {
 //   "ats_score": number,
 //   "matched_keywords": [],
 //   "missing_keywords": [],
-//   "improvements": [
-//     "Explain transformation (e.g., converted backend to data science, updated skills, added metrics)"
+//   "improvements": [],
+//   "optimized_resume": "",
+
+//   "personal_info": {
+//     "name": "",
+//     "email": "",
+//     "phone": "",
+//     "linkedin": "",
+//     "github": "",
+//     "leetcode": ""
+//   },
+
+//   "summary": "",
+//    "skills": {
+//     "frontend": [],
+//     "backend": [],
+//     "database": [],
+//     "cloud": [],
+//     "tools": []
+//   },
+//   "experience": [
+//     {
+//       "role": "",
+//       "company": "",
+//       "duration": "",
+//       "description": ""
+//     }
 //   ],
-//   "optimized_resume": "FULLY TRANSFORMED, JOB-SPECIFIC RESUME"
+
+//   "projects": [
+//     {
+//       "name": "",
+//       "tech": "",
+//       "description": ""
+//     }
+//   ]
 // }
 
 // ---
 
-// IMPORTANT:
-// - ONLY return valid JSON
-// - NO markdown
-// - NO ```json
-// - Resume MUST match job description domain
-// - Skills MUST reflect job requirements
-// - Experience MUST align with target role
+// Resume:
+// %s
+
+// Job Description:
+// %s
 // """.formatted(resume, jd);
-
 String prompt = """
-You are a world-class ATS resume optimizer, career strategist, and LaTeX resume generator.
+You are a world-class ATS resume optimizer, technical resume writer, and hiring expert.
 
-INPUT:
-Resume:
-%s
+Your task is to intelligently transform and optimize the resume according to the job description while keeping the resume realistic, professional, ATS-friendly, and highly competitive.
 
-Job Description:
-%s
+====================================================
+CORE OBJECTIVE
+====================================================
 
-OBJECTIVE:
-Completely transform the resume to match the job description, EVEN IF the domain or technology stack is different.
+Transform the resume to strongly align with the target role EVEN IF:
+- technology stack differs
+- domain differs
+- role naming differs
 
----
+Examples:
+- Java Backend → Python Backend
+- Backend Engineer → Data Engineer
+- Full Stack → AI/ML Engineer
+- Software Engineer → Cybersecurity Engineer
 
-STEP 1: IDENTIFY TARGET ROLE
-- Analyze job description
-- Identify role, skills, tools, domain
+IMPORTANT:
+- NEVER invent fake companies
+- NEVER invent fake dates
+- NEVER invent fake education
+- KEEP employment history realistic
+- You MAY intelligently adapt responsibilities, tools, projects, keywords, and technical terminology
 
----
+====================================================
+STEP 1 — ANALYZE JOB DESCRIPTION
+====================================================
 
-STEP 2: TRANSFORM RESUME
+Identify:
+- target role
+- seniority
+- domain
+- required technologies
+- preferred technologies
+- tools/platforms
+- ATS keywords
+- business expectations
 
-A. EXPERIENCE:
-- KEEP same company names, roles, dates
-- Rewrite responsibilities to match job description
-- Adapt domain dynamically (Java → Python, Backend → Data Science, etc.)
-- Add measurable impact:
-  - "Improved performance by 30%%"
-  - "Reduced latency by 40%%"
+====================================================
+STEP 2 — RESUME TRANSFORMATION
+====================================================
 
-B. SKILLS (VERY IMPORTANT):
-- Rewrite skills completely based on job description
-- Add required skills
-- Remove irrelevant skills
-- Ensure alignment with experience
+A) PROFESSIONAL SUMMARY
+- Write a powerful ATS-optimized summary
+- Tailor it specifically to target role
+- Include:
+  - experience level
+  - core technologies
+  - domain expertise
+  - business impact
+- Keep concise and highly professional
 
-C. PROJECTS:
-- Modify to reflect target role
-- Add business impact + metrics
+----------------------------------------------------
 
----
+B) EXPERIENCE SECTION (VERY IMPORTANT)
 
-STEP 3: ATS OPTIMIZATION
-- Inject job description keywords
-- Improve ATS score
+RULES:
+- KEEP:
+  - company names
+  - role names
+  - durations
+- DO NOT fabricate employment
+- Rewrite responsibilities to align with target role
+- Add measurable impact and metrics
+- Add scalable engineering terminology
+- Add ATS keywords naturally
+- Convert generic work into high-impact technical achievements
 
----
+Examples:
+- "Worked on APIs"
+→ "Designed and developed scalable RESTful APIs serving high concurrent traffic"
 
-LATEX GENERATION RULES (STRICT):
+- "Improved performance"
+→ "Reduced API response latency by 40%% using caching and query optimization"
 
-- Use EXACT template below
-- DO NOT change structure
-- ONLY replace content
-- Keep formatting clean and professional
-- Escape special characters properly
+- "Backend services"
+→ "Built distributed microservices architecture with asynchronous event-driven communication"
 
----
+IMPORTANT:
+- Group all responsibilities under ONE role entry
+- DO NOT repeat same role multiple times
+- Description must contain strong bullet-point style sentences
 
-LATEX TEMPLATE:
+----------------------------------------------------
 
-\\documentclass[letterpaper,11pt]{article}
+C) SKILLS SECTION (VERY IMPORTANT)
 
-\\usepackage{latexsym}
-\\usepackage[empty]{fullpage}
-\\usepackage{titlesec}
-\\usepackage{marvosym}
-\\usepackage[usenames,dvipsnames]{color}
-\\usepackage{verbatim}
-\\usepackage{enumitem}
-\\usepackage[hidelinks]{hyperref}
-\\usepackage{fancyhdr}
-\\usepackage[english]{babel}
-\\usepackage{tabularx}
-\\input{glyphtounicode}
+Rewrite skills completely according to job description.
 
-\\pagestyle{fancy}
-\\fancyhf{}
-\\fancyfoot{}
-\\renewcommand{\\headrulewidth}{0pt}
-\\renewcommand{\\footrulewidth}{0pt}
+RULES:
+- Prioritize JD technologies
+- Remove weak irrelevant skills
+- Add logically inferable technologies
+- Categorize professionally
 
-\\addtolength{\\oddsidemargin}{-0.5in}
-\\addtolength{\\evensidemargin}{-0.5in}
-\\addtolength{\\textwidth}{1in}
-\\addtolength{\\topmargin}{-.5in}
-\\addtolength{\\textheight}{1.0in}
+Skill Categories:
+- languages
+- frontend
+- backend
+- database
+- cloud
+- devops
+- testing
+- tools
 
-\\urlstyle{same}
-\\raggedbottom
-\\raggedright
-\\setlength{\\tabcolsep}{0in}
+IMPORTANT:
+- Skills MUST align with experience/projects
+- Do NOT add random unrelated technologies
 
-\\titleformat{\\section}{
-  \\vspace{-4pt}\\scshape\\raggedright\\large
-}{}{0em}{imp}[\\color{black}\\titlerule \\vspace{-5pt}]
+----------------------------------------------------
 
-\\pdfgentounicode=1
+D) PROJECTS SECTION (HIGH IMPACT)
 
-\\newcommand{\\resumeItem}[1]{
-  \\item\\small{{#1 \\vspace{-2pt}}}
-}
+Projects can be transformed more aggressively than experience.
 
-\\newcommand{\\resumeSubheading}[4]{
-  \\vspace{-2pt}\\item
-    \\begin{tabular*}{0.97\\textwidth}[t]{l@{\\extracolsep{\\fill}}r}
-      \\textbf{#1} & #2 \\\\
-      \\textit{\\small#3} & \\textit{\\small #4} \\\\
-    \\end{tabular*}\\vspace{-7pt}
-}
+RULES:
+- Modify project descriptions to align with target role
+- Add business value
+- Add metrics
+- Add scalable architecture terminology
+- Add ATS keywords naturally
+- Improve technical sophistication
 
-\\newcommand{\\resumeSubHeadingListStart}{\\begin{itemize}[leftmargin=0.15in, label={}]}
-\\newcommand{\\resumeSubHeadingListEnd}{\\end{itemize}}
-\\newcommand{\\resumeItemListStart}{\\begin{itemize}}
-\\newcommand{\\resumeItemListEnd}{\\end{itemize}\\vspace{-5pt}}
+Examples:
+- Backend app
+→ scalable distributed platform
+- CRUD app
+→ enterprise-grade service platform
+- Authentication project
+→ secure identity/access management system
 
-\\begin{document}
+IMPORTANT:
+- Keep projects realistic
+- Do NOT generate impossible claims
 
-\\begin{center}
-    \\textbf{\\Huge \\scshape <NAME>} \\\\
-    \\small <PHONE> $|$ <EMAIL> $|$ <LINKEDIN> $|$ <GITHUB>
-\\end{center}
+----------------------------------------------------
 
-\\section{Summary}
-<summary>
+E) ACHIEVEMENTS / CERTIFICATIONS
 
-\\section{Experience}
-\\resumeSubHeadingListStart
-<experience entries using resumeSubheading + resumeItem>
-\\resumeSubHeadingListEnd
+- Add strong resume-friendly wording
+- Keep concise
+- ATS optimized
 
-\\section{Education}
-\\resumeSubHeadingListStart
-<education>
-\\resumeSubHeadingListEnd
+====================================================
+STEP 3 — ATS OPTIMIZATION
+====================================================
 
-\\section{Projects}
-\\resumeSubHeadingListStart
-<projects>
-\\resumeSubHeadingListEnd
+- Inject important JD keywords naturally
+- Improve keyword density
+- Improve readability
+- Improve recruiter impact
+- Optimize for ATS parsing
+- Make resume sound premium and modern
 
-\\section{Technical Skills}
-<skills>
+====================================================
+OUTPUT RULES
+====================================================
 
-\\end{document}
+CRITICAL:
+- Return ONLY VALID JSON
+- NO markdown
+- NO explanation
+- NO extra text
+- NO code blocks
+- NO comments
 
----
+Descriptions:
+- concise
+- impactful
+- bullet-style
+- ATS optimized
 
-OUTPUT FORMAT (STRICT JSON ONLY):
+====================================================
+OUTPUT JSON FORMAT
+====================================================
 
 {
   "ats_score": number,
@@ -277,47 +276,81 @@ OUTPUT FORMAT (STRICT JSON ONLY):
   "missing_keywords": [],
   "improvements": [],
   "optimized_resume": "",
-  "optimized_resume_latex": ""
+
+  "personal_info": {
+    "name": "",
+    "email": "",
+    "phone": "",
+    "linkedin": "",
+    "github": "",
+    "leetcode": ""
+  },
+
+  "summary": "",
+
+  "skills": {
+    "languages": [],
+    "frontend": [],
+    "backend": [],
+    "database": [],
+    "cloud": [],
+    "devops": [],
+    "testing": [],
+    "tools": []
+  },
+
+  "education": [
+    {
+      "college": "",
+      "degree": "",
+      "duration": "",
+      "score": ""
+    }
+  ],
+
+  "experience": [
+    {
+      "role": "",
+      "company": "",
+      "duration": "",
+      "description": [list of bullet points]
+    }
+  ],
+
+  "projects": [
+    {
+      "name": "",
+      "tech": "",
+      "description": ""
+    }
+  ],
+
+  "achievements": [],
+  "certifications": []
 }
 
----
+====================================================
+RESUME
+====================================================
 
-IMPORTANT:
-- ONLY return valid JSON
-- NO markdown
-- NO ```json
-- Resume MUST match job description
-- Skills MUST reflect JD
-- Experience MUST align with role
-- don't miss this line }{}{0em}{}[\\color{black}\\titlerule \\vspace{-5pt}] in title section
-- don't add the // and \\ slashes .te file
-LATEX STRICT RULES:
-  1.In LaTeX commands, NEVER remove empty braces {} IMPPORTANT.
-  2. They are REQUIRED even if empty.
- -Make sure titleformat i need horizontal line after section title. This is critical for formatting. The line must be exactly like this:
--}{}{0em}{}[\\color{black}\\titlerule \\vspace{-5pt}]
--DO NOT use \\& — ALWAYS use single forward slash & in LaTeX tables
+%s
+
+====================================================
+JOB DESCRIPTION
+====================================================
+
+%s
 """.formatted(resume, jd);
 
-            // // 🔥 BODY WITH RESPONSE FORMAT (IMPORTANT)
-            // Map<String, Object> body = Map.of(
-            //         "model", "gpt-5.4-nano",
-            //         "input", prompt,
-            //         "temperature", 0.3,
-            //         "max_output_tokens", 2000
-            // );
-
-          Map<String, Object> body = Map.of(
-        "model", "gpt-5.4-nano",
-        "input", prompt,
-        "temperature", 0.3,
-        "max_output_tokens", 4000,
-        "text", Map.of(                      // 🔥 NEW FIX
-            "format", Map.of(
-                "type", "json_object"
-            )
-        )
-);
+            Map<String, Object> body = Map.of(
+                    "model", "gpt-5.4-nano",
+                    "input", prompt,
+                    "temperature", 0.3,
+                    "max_output_tokens", 3000,
+                    "text", Map.of(
+                            "format", Map.of("type", "json_object")
+                    )
+            );
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -335,28 +368,40 @@ LATEX STRICT RULES:
 
             JsonNode root = objectMapper.readTree(response.getBody());
 
-            String text = root
-                    .path("output")
-                    .get(0)
-                    .path("content")
-                    .get(0)
-                    .path("text")
-                    .asText();
+            JsonNode output = root.path("output");
 
-            // 🔥 CLEAN RESPONSE
+            if (!output.isArray() || output.size() == 0) {
+                throw new RuntimeException("Invalid OpenAI response");
+            }
+
+            JsonNode content = output.get(0).path("content");
+
+            if (!content.isArray() || content.size() == 0) {
+                throw new RuntimeException("Invalid OpenAI content");
+            }
+
+            String text = content.get(0).path("text").asText();
+
+            System.out.println("🔥 AI RAW RESPONSE:\n" + text); // DEBUG
+
             text = cleanJson(text);
 
-            // 🔥 SAFE PARSE (IMPORTANT)
-            return safeParseJson(text);
+            Map<String, Object> result = safeParseJson(text);
+
+            // ✅ FALLBACK FIX (IMPORTANT)
+            result.putIfAbsent("ats_score", 0);
+            result.putIfAbsent("matched_keywords", List.of());
+            result.putIfAbsent("missing_keywords", List.of());
+            result.putIfAbsent("improvements", List.of());
+            result.putIfAbsent("optimized_resume", "");
+
+            return result;
 
         } catch (Exception e) {
             throw new RuntimeException("OpenAI failed: " + e.getMessage(), e);
         }
     }
 
-    /**
-     * 🔥 Clean markdown if model still adds it
-     */
     private String cleanJson(String text) {
         return text
                 .replace("```json", "")
@@ -364,9 +409,6 @@ LATEX STRICT RULES:
                 .trim();
     }
 
-    /**
-     * 🔥 SAFE JSON PARSE (VERY IMPORTANT)
-     */
     private Map<String, Object> safeParseJson(String text) {
         try {
             return objectMapper.readValue(text, Map.class);

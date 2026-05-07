@@ -59,7 +59,8 @@ const formattedResult = {
   missingKeywords: data.missing_keywords || [],
   improvements: data.improvements || [],
   optimizedResume: data.optimized_resume || "",
-  optimizedResumeLatex: data.optimized_resume_latex || "" // 🔥 IMPORTANT
+
+  rawData: data // ✅ VERY IMPORTANT (used for PDF)
 };
       setResults(formattedResult);
       setCurrentStep(4);

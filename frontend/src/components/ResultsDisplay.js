@@ -1,6 +1,6 @@
 // import React from 'react';
 // import { motion } from 'framer-motion';
-// import { Download, TrendingUp, AlertCircle } from 'lucide-react';
+// import { Download, TrendingUp, AlertCircle, FileText, FileCode } from 'lucide-react';
 
 // const ResultsDisplay = ({ results }) => {
 //   if (!results) return null;
@@ -10,16 +10,47 @@
 //     matchedKeywords,
 //     missingKeywords,
 //     improvements,
-//     optimizedResume
+//     optimizedResume,
+//     optimizedResumeLatex // 🔥 NEW
 //   } = results;
 
+//   // 📄 TXT Download
 //   const downloadResume = () => {
 //     const element = document.createElement('a');
 //     const file = new Blob([optimizedResume], { type: 'text/plain' });
 //     element.href = URL.createObjectURL(file);
 //     element.download = 'optimized_resume.txt';
-//     document.body.appendChild(element);
 //     element.click();
+//   };
+
+//   // 📄 LATEX Download
+//   const downloadLatex = () => {
+//     const element = document.createElement('a');
+//     const file = new Blob([optimizedResumeLatex || ""], { type: 'text/plain' });
+//     element.href = URL.createObjectURL(file);
+//     element.download = 'resume.tex';
+//     element.click();
+//   };
+
+//   // 📄 PDF Download (Backend API)
+//   const downloadPDF = async () => {
+//     try {
+//       const response = await fetch('http://localhost:8080/api/resume/download-pdf', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ latex: optimizedResumeLatex })
+//       });
+
+//       const blob = await response.blob();
+//       const url = window.URL.createObjectURL(blob);
+
+//       const a = document.createElement('a');
+//       a.href = url;
+//       a.download = 'resume.pdf';
+//       a.click();
+//     } catch (err) {
+//       alert("PDF generation failed");
+//     }
 //   };
 
 //   return (
@@ -28,17 +59,17 @@
 //       animate={{ opacity: 1 }}
 //       className="bg-white rounded-xl shadow-lg p-6"
 //     >
-//       <h2 className="text-2xl font-bold mb-4">Optimization Results</h2>
+//       <h2 className="text-2xl font-bold mb-6">Optimization Results</h2>
 
 //       {/* ATS Score */}
-//       <div className="mb-6">
+//       <div className="mb-6 text-center">
 //         <h3 className="text-lg font-semibold">ATS Score</h3>
-//         <div className="text-3xl font-bold text-green-600">{atsScore}</div>
+//         <div className="text-5xl font-bold text-green-600">{atsScore}</div>
 //       </div>
 
 //       {/* Matched Keywords */}
 //       <div className="mb-6">
-//         <h3 className="font-semibold">Matched Keywords</h3>
+//         <h3 className="font-semibold text-green-700">Matched Keywords</h3>
 //         <div className="flex flex-wrap gap-2 mt-2">
 //           {matchedKeywords?.map((k, i) => (
 //             <span key={i} className="bg-green-100 px-2 py-1 rounded text-sm">
@@ -76,22 +107,45 @@
 //         </ul>
 //       </div>
 
-//       {/* Resume */}
+//       {/* Resume Preview */}
 //       <div className="mb-6">
 //         <h3 className="font-semibold">Optimized Resume</h3>
-//         <pre className="bg-gray-100 p-4 rounded text-sm whitespace-pre-wrap">
+//         <pre className="bg-gray-100 p-4 rounded text-sm whitespace-pre-wrap max-h-60 overflow-y-auto">
 //           {optimizedResume}
 //         </pre>
 //       </div>
 
-//       {/* Download */}
-//       <button
-//         onClick={downloadResume}
-//         className="bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-//       >
-//         <Download className="w-4 h-4" />
-//         Download Resume
-//       </button>
+//       {/* 🔥 DOWNLOAD SECTION */}
+//       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+
+//         {/* TXT */}
+//         <button
+//           onClick={downloadResume}
+//           className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700"
+//         >
+//           <FileText className="w-4 h-4" />
+//           TXT
+//         </button>
+
+//         {/* LATEX */}
+//         <button
+//           onClick={downloadLatex}
+//           className="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700"
+//         >
+//           <FileCode className="w-4 h-4" />
+//           Overleaf (.tex)
+//         </button>
+
+//         {/* PDF */}
+//         <button
+//           onClick={downloadPDF}
+//           className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-green-700"
+//         >
+//           <Download className="w-4 h-4" />
+//           PDF
+//         </button>
+
+//       </div>
 //     </motion.div>
 //   );
 // };
@@ -101,7 +155,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Download, TrendingUp, AlertCircle, FileText, FileCode } from 'lucide-react';
+import { Download, TrendingUp, AlertCircle, FileText } from 'lucide-react';
 
 const ResultsDisplay = ({ results }) => {
   if (!results) return null;
@@ -112,7 +166,7 @@ const ResultsDisplay = ({ results }) => {
     missingKeywords,
     improvements,
     optimizedResume,
-    optimizedResumeLatex // 🔥 NEW
+    rawData // ✅ FULL JSON FOR PDF
   } = results;
 
   // 📄 TXT Download
@@ -124,22 +178,13 @@ const ResultsDisplay = ({ results }) => {
     element.click();
   };
 
-  // 📄 LATEX Download
-  const downloadLatex = () => {
-    const element = document.createElement('a');
-    const file = new Blob([optimizedResumeLatex || ""], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
-    element.download = 'resume.tex';
-    element.click();
-  };
-
-  // 📄 PDF Download (Backend API)
+  // 📄 PDF Download (NEW FLOW)
   const downloadPDF = async () => {
     try {
       const response = await fetch('http://localhost:8080/api/resume/download-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ latex: optimizedResumeLatex })
+        body: JSON.stringify(rawData) // ✅ SEND FULL JSON
       });
 
       const blob = await response.blob();
@@ -168,7 +213,7 @@ const ResultsDisplay = ({ results }) => {
         <div className="text-5xl font-bold text-green-600">{atsScore}</div>
       </div>
 
-      {/* Matched Keywords */}
+      {/* Keywords */}
       <div className="mb-6">
         <h3 className="font-semibold text-green-700">Matched Keywords</h3>
         <div className="flex flex-wrap gap-2 mt-2">
@@ -180,7 +225,6 @@ const ResultsDisplay = ({ results }) => {
         </div>
       </div>
 
-      {/* Missing Keywords */}
       <div className="mb-6">
         <h3 className="font-semibold text-red-600">Missing Keywords</h3>
         <div className="flex flex-wrap gap-2 mt-2">
@@ -216,10 +260,9 @@ const ResultsDisplay = ({ results }) => {
         </pre>
       </div>
 
-      {/* 🔥 DOWNLOAD SECTION */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      {/* DOWNLOAD */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-        {/* TXT */}
         <button
           onClick={downloadResume}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700"
@@ -228,16 +271,6 @@ const ResultsDisplay = ({ results }) => {
           TXT
         </button>
 
-        {/* LATEX */}
-        <button
-          onClick={downloadLatex}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700"
-        >
-          <FileCode className="w-4 h-4" />
-          Overleaf (.tex)
-        </button>
-
-        {/* PDF */}
         <button
           onClick={downloadPDF}
           className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-green-700"
